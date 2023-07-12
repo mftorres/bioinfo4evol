@@ -16,39 +16,106 @@ biblio-style: apalike
 csl: chicago-fullnote-bibliography.csl
 ---
 
-# The command line prompt {#cmd}
+# Introduction to bioinformatics and reproducibility in science {#cmd}
 
-## Basic Unix/Linux commands
+**Brief description:**
+This notebook will walk you through the installation of Linux subsystems and Ubuntu OS and the steps for setting up a working environment. You will learn basic Linux commands from examples focused on analysing biological data, e.g. sequences and their metadata. This is an introductory tutorial for people that is not familiar with the command line.
 
-### Navigating the folders
 
-### Relative and absolute paths
+1. The Linux subsystem (Windows only)
+1.1. Installing the Linux subsystem
 
-### Managing files
+2. Conda environments
+2.1. Installing Conda
+2.2. Creating and deleting environments
+2.3. Creating environments from files
+2.4. Exporting environments
+2.5. Jupyter notebooks # and wildcards Rkernel
 
-### Finding and replacing patterns
+3. Basic Linux commands
+3.1. Folder hierarchy # ls cd pwd mv
+3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
+3.3. Matching and replacing patterns # grep sed perl -pe tr
+3.4. Compress and dicompress # gzip tar pigz
+3.5. Connecting with other machines # ssh scp rsync
+3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
 
-## Basic AWK
+4. AWK
+1.1. Basic filtering
+1.2. Operations
 
-### Fields and filters
+5. Intro to schedulers
+5.1. Terminology
+5.2. Job submission files
 
-## Anaconda and conda environments
+---
 
-### Activating Linux environments (Windows)
+1. The Linux subsystem (Windows only)
 
-### Installing Anaconda/conda
+1.1. Installing the Linux subsystem
+Follow these steps if you work on a Windows machine (likely Windows 11 but it works for Windows 10 too). If you have MacOS or Ubuntu/Linux already running in your machine, skip this section.
 
-### Creating an environment
+Right click on the Windows icon in the task bar, click search, search for 'turn windows features on or off'. Open the application.
 
-### Installing, managing, and deleting programs
+Look for the options 'windows subsystem for linux' and 'virtual machine platform' and tick the boxes.
 
-### Reproducibility notes
+Hit OK and restart your machine.
 
-## Notebooks and Reproducibility
+Go again to the windows icon and search for bash. Open the application. If you see an error and a URL, open the link on a web browser and follow the instructions.
 
-### Jupyter notebook kerne;s
+2. Conda environments
+This section takes you through installing conda and managing environments. Documentation about Conda is available [here](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
-### Markdown
+2.1. Installing Conda
+Download the Linux version of Conda [here](https://www.anaconda.com/download#downloads). It is important that you get the Linux distribution as you will be installing it in a Linux subsystem (even within windows). Use the `wget` command to retrieve the file from conda's website.
 
-### Versioning repositories
+Now, open the command line and check where in the folders' hierarchy you are. You can do that with the `pwd` command: **print current directory**. You can explore how to use it by adding the `--help` argument.
 
+```{bash echo = FALSE}
+pwd --help
+```
+
+You are likely to be in a folder called **home**, pretty much your starting folder. But in the case of linux subsystems within windows, that is bash's starting folder and not your main disk's home folder. You need to **change directory** to your **Downloads** folder to find the conda installer.
+
+Then, **list** files to check if the installer is in that folder. The asterisk is used as a [wildcard](https://tldp.org/LDP/GNU-Linux-Tools-Summary/html/x11655.htm).
+
+To run the bash `*sh` script use the `bash` command. Follow the instructions, either pressing ENTER, space for scrolling down the page, or typing "yes".
+
+**Note:** always replace my username with your username e.g. mftorr should be replaced with your username.
+
+```{bash echo = FALSE}
+cd /mnt/c/Users/mftorr/Downloads/
+ls Ana*sh
+bash Anaconda3-2023.07-0-Linux-x86_64.sh
+```
+
+Once you are done, close the bash command line interface and open a new one.
+
+2.2. Creating and deleting environments
+Conda allows you to create discrete, enclosed environments with specific versions of programs to ensure a smooth interaction. If you are only worried about one particular program, conda will look for the versions of other programs and dependencies (programs that other programs require for working correctly) that works best and avoids conflict.
+
+Every time we run an analysis associated to a publication, we can export the environment to a file that other researchers can use to recreate the environment used for running said analysis. Better yet, if you need to re-install conda, you can quickly use that file to re-install your environments. Conda environments help increase the reproducibility and transparency of your research.
+
+Most of this section is taken from the [conda](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html) documentation, which you can check in more depth if you need to.
+
+2.3. Creating environments from files
+
+
+2.4. Exporting environments
+2.5. Jupyter notebooks # and wildcards Rkernel
+
+3. Basic Linux commands
+3.1. Folder hierarchy # ls cd pwd mv
+3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
+3.3. Matching and replacing patterns # grep sed perl -pe tr
+3.4. Compress and dicompress # gzip tar pigz
+3.5. Connecting with other machines # ssh scp rsync
+3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+
+4. AWK
+1.1. Basic filtering
+1.2. Operations
+
+5. Intro to schedulers
+5.1. Terminology
+5.2. Job submission files
