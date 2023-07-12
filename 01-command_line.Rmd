@@ -67,7 +67,12 @@ Go again to the windows icon and search for bash. Open the application. If you s
 This section takes you through installing conda and managing environments. Documentation about Conda is available [here](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
 
 2.1. Installing Conda
-Download the Linux version of Conda [here](https://www.anaconda.com/download#downloads). It is important that you get the Linux distribution as you will be installing it in a Linux subsystem (even within windows). Use the `wget` command to retrieve the file from conda's website.
+Download the Linux version of Conda [here](https://www.anaconda.com/download#downloads). It is important that you get the Linux distribution as you will be installing it in a Linux subsystem (even within windows). Use the `wget` command to retrieve the file from conda's website. The code below will not work easily if you are working under a VU VPN. If that is the case, try the manual download.
+
+```{bash echo = FALSE}
+wget --help # check the manual if you want
+wget https://repo.anaconda.com/archive/Anaconda3-2023.07-0-Linux-x86_64.sh
+```
 
 Now, open the command line and check where in the folders' hierarchy you are. You can do that with the `pwd` command: **print current directory**. You can explore how to use it by adding the `--help` argument.
 
