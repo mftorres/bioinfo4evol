@@ -103,9 +103,17 @@ Every time we run an analysis associated to a publication, we can export the env
 
 Most of this section is taken from the [conda](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html) documentation, which you can check in more depth if you need to.
 
+Let's create an environment from scratch. we ask `conda` to `create` a new environment with `-n bioevo` name. When prompted, reply 'y' to whether you want to install the packages needed (for now none). Then, activate the environment using `conda activate`.
+
+Once active, you should see it in the left side of the prompt's line.
+
+```bash
+conda create -n bioevo
+conda activate bioevo
+```
+
+
 2.3. Creating environments from files
-
-
 2.4. Exporting environments
 2.5. Jupyter notebooks # and wildcards Rkernel
 
