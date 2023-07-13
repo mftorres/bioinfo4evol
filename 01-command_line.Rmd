@@ -105,15 +105,30 @@ Most of this section is taken from the [conda](https://conda.io/projects/conda/e
 
 Let's create an environment from scratch. we ask `conda` to `create` a new environment with `-n bioevo` name. When prompted, reply 'y' to whether you want to install the packages needed (for now none). Then, activate the environment using `conda activate`.
 
-Once active, you should see it in the left side of the prompt's line.
+Once active, you should see it in the left side of the prompt's line. **Anything that you install whilst an environment is active will only be available for that environment.**
 
 ```bash
 conda create -n bioevo
 conda activate bioevo
 ```
 
+If we want to install a particular library through conda, e.g. [VCFtools](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3137218/), you can check for the correct channel (locations where the packages are stored) within conda's repository website, e.g. [here](https://anaconda.org/bioconda/vcftools). The commands `conda config --add channels` indicate conda that it needs to include the channles bioconda and conda-forge, locations where most (but not all) libraries for bioinformatics are sitting.
+
+```bash
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda install -c bioconda vcftools
+```
+
+You can check the list of environments installed within conda and their folder location using the command `conda env list`. Once you see the folder location, you can remove the environment by simply deleting the entire folder using `rm` and the arguments `-r`. The command will ask you if are sure you want to delete the entire folder. BE CAREFUL! That command will remove folders, files, data, everything you have in there. Don't drink and `rm`.
+
+```bash
+conda env list
+rm -r /path/to/environment/folder
+```
 
 2.3. Creating environments from files
+For reproducibility, sometimes it is desirable to install an environment from a file that someone else has exported. 
 2.4. Exporting environments
 2.5. Jupyter notebooks # and wildcards Rkernel
 
