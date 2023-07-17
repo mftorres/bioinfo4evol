@@ -114,6 +114,7 @@ Once active, you should see it in the left side of the prompt. **Anything that y
 conda create -n bioevo
 conda activate bioevo
 conda deactivate # deactivates the environmnet and takes you back to conda base
+# anything after a hastag symbol is ignored, not executed, and considered a comment.
 ```
 
 If we want to install a particular library through conda, e.g. [VCFtools](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3137218/), you can check for the correct channel (locations where the packages are stored) within conda's repository website, e.g. [here](https://anaconda.org/bioconda/vcftools). The commands `conda config --add channels` indicate conda that it needs to include the channles bioconda and conda-forge, locations where most (but not all) libraries for bioinformatics are sitting.
@@ -171,10 +172,27 @@ For example, assuming the current structure: `C/Users/mftorr/Documents/` # ADD I
 Then the absolute and relative paths to reach `C/Users/mftorr/Documents/biol4evol/Lectures/Lecture0` are:
 
 **Absolute:** ``
-**relative:** ``
+**Relative:** ``
 
 Thus, to move around folders, the first step is to know your **current working directory**, easily done with `pwd`. It is also helpful to understand which files are inside your current folder by **listing** its items. The command `ls` comes in handy, particularly when specific argumens are used. For example, `ls -l` will list all items within a folder, printing to screen the [permissions of a file](https://en.wikipedia.org/wiki/File-system_permissions) (first column from left to right), size of the file (fifth column) and last-modified date. To access the same information in a "human readable" format, you can use `ls -lh`. If you want to explore more options for listing (or in general for other commands), you can use `ls --help`.
 
+**Advanced:** try using `ls` and Linux wildcards to filter which files to list or move.
+
+You can list the contents of a folder if you know the path. Once you confirm that a particular folder is the one you want to move to, you can **change directory** to that path using `cd`. You can also copy (leaves a copy behind) or move (does not, or replaces one version with another) files across folders. Finally, you can create new folders with `mkdir` and the name of the new folder.
+
+``bash
+pwd # likely something like /home/user
+ls
+ls -lh
+ls /mnt/c/Users/user/Documents/*txt # only lists files with the txt extension
+cd /mnt/c/Users/user/Documents/
+mkdir testfolder
+cp file1 testfolder/file1
+mv file2 testfolder/
+
+ls -lh
+ls testfolder/
+```
 
 **TO DO:**
 Familiarise yourself with the folders 
