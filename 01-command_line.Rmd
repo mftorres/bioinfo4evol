@@ -30,7 +30,6 @@ This notebook will walk you through the installation of Linux subsystems and Ubu
 2.2. Creating and deleting environments
 2.3. Creating environments from files
 2.4. Exporting environments
-2.5. Jupyter notebooks # and wildcards Rkernel
 
 3. Basic Linux commands
 3.1. Folder hierarchy # ls cd pwd mv
@@ -48,6 +47,8 @@ This notebook will walk you through the installation of Linux subsystems and Ubu
 5.1. Terminology
 5.2. Job submission files
 
+6. Jupyter notebooks # and wildcards Rkernel
+
 ---
 
 1. The Linux subsystem (Windows only)
@@ -62,6 +63,8 @@ Look for the options 'windows subsystem for linux' and 'virtual machine platform
 Hit OK and restart your machine.
 
 Go again to the windows icon and search for bash. Open the application. If you see an error and a URL, open the link on a web browser and follow the instructions.
+
+---
 
 2. Conda environments
 This section takes you through installing conda and managing environments. Documentation about Conda is available [here](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
@@ -110,6 +113,7 @@ Once active, you should see it in the left side of the prompt. **Anything that y
 ```bash
 conda create -n bioevo
 conda activate bioevo
+conda deactivate # deactivates the environmnet and takes you back to conda base
 ```
 
 If we want to install a particular library through conda, e.g. [VCFtools](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3137218/), you can check for the correct channel (locations where the packages are stored) within conda's repository website, e.g. [here](https://anaconda.org/bioconda/vcftools). The commands `conda config --add channels` indicate conda that it needs to include the channles bioconda and conda-forge, locations where most (but not all) libraries for bioinformatics are sitting.
@@ -120,24 +124,61 @@ conda config --add channels conda-forge
 conda install -c bioconda vcftools
 ```
 
-You can check the list of environments installed within conda and their folder location using the command `conda env list`. Once you see the folder location, you can remove the environment by simply deleting the entire folder using `rm` and the arguments `-r`. The command will ask you if are sure you want to delete the entire folder. BE CAREFUL! That command will remove folders, files, data, everything you have in there. Don't drink and `rm`.
+You can check the list of environments installed within conda and their folder location using the command `conda env list`. Once you see the folder location, you can remove the environment by simply deleting the entire folder using `rm` and the arguments `-r`. The command will ask you if are sure you want to delete the entire folder. BE CAREFUL! That command will remove folders, files, data, everything you have in there. Don't drink and `rm`. Alternatively (if you remember the name of your environments), you can use `conda remove`
 
 ```bash
 conda env list
 rm -r /path/to/environment/folder
+
+conda remove --name bioevo --all
 ```
 
 2.3. Creating environments from files
-For reproducibility, sometimes it is desirable to install an environment from a file that someone else has exported. 
+For reproducibility, sometimes it is desirable to install an environment from a file that someone else has exported. The process is as simple as usong `conda 
 
+You can confirm that all packages and their dependencies were intalled by listing every component within the environment with `conda list` and the name of the environment. The name of a single package can be added at the end, to specifically check its installation and version.
+
+```bash
+conda env create -f bioevo_environment.yml
+
+# check for packages
+conda list -n bioevo
+conda list -n bioevo blast
+```
 
 2.4. Exporting environments
+You can export and share your own environment. To do so, make sure the environment is active before using `conda env export`. Here, the '>' symbol re-directs the output to a new file called *bioevo_environment.yml*. Every time you run this command and re-direct the output to the file, the old file will be replaced by the new one (if both have the same name). This behaviour is typical of redirecting with '>' but we will cover that later.
 
+```bash
+conda activate bioevo # in case your environment is not active
+conda env export > bioevo_environmentv2.yml
+```
 
-2.5. Jupyter notebooks # and wildcards Rkernel
+---
 
 3. Basic Linux commands
+We have set up an enviroment within which we can work, now the aim is to use biological data to learn basic Linux commands and how to use them within the context of biological data analysis.
+
+First, we will gather data from [NCBI](https://www.ncbi.nlm.nih.gov/), one of the most widely used databases "[of online resources for biological information and data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6323993/#:~:text=Abstract,published%20in%20life%20science%20journals)". We are also interested in exploring the data available for Lithuanian spiders on NCBI, using as a reference a species list published by [Biteniekytė and Rėlys (2011)]. Our aim is to generate a report that highlights which spider species have data available, which don't, the type of data available and its quality. You are likely to use these commands often, following a similar data processing that will help you have an idea about data availability before you embark in your own projects.
+
 3.1. Folder hierarchy # ls cd pwd mv
+Files are stored within folders (or directories, is the same) and folders are nested within other folders, following a hierarchy similar to a tree structure. Using the command line interface, we can navigate through folders by following the branches of the tree, up or down to different levels of the hierarchy.
+
+We can express the **path** from one folder to another in two ways: absolute and relative. **Absolute paths** explicitely indicate the folder names along the hierarchy path, from the current location to the destination folder or file **Relative** paths express the steps along the hierarchy path to reach another destination and assume the user know its current position *relative* to the rest of the structure.
+
+For example, assuming the current structure: `C/Users/mftorr/Documents/` # ADD IMAGE AND FIX PATHS
+
+Then the absolute and relative paths to reach `C/Users/mftorr/Documents/biol4evol/Lectures/Lecture0` are:
+
+**Absolute:** ``
+**relative:** ``
+
+Thus, to move around folders, the first step is to know your **current working directory**, easily done with `pwd`. It is also helpful to understand which files are inside your current folder by **listing** its items. The command `ls` comes in handy, particularly when specific argumens are used. For example, `ls -l` will list all items within a folder, printing to screen the [permissions of a file](https://en.wikipedia.org/wiki/File-system_permissions) (first column from left to right), size of the file (fifth column) and last-modified date. To access the same information in a "human readable" format, you can use `ls -lh`. If you want to explore more options for listing (or in general for other commands), you can use `ls --help`.
+
+
+**TO DO:**
+Familiarise yourself with the folders 
+
 3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
 3.3. Matching and replacing patterns # grep sed perl -pe tr
 3.4. Compress and dicompress # gzip tar pigz
@@ -151,3 +192,5 @@ For reproducibility, sometimes it is desirable to install an environment from a 
 5. Intro to schedulers
 5.1. Terminology
 5.2. Job submission files
+
+6. Jupyter notebooks # and wildcards Rkernel
