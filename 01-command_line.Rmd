@@ -34,7 +34,7 @@ This notebook will walk you through the installation of Linux subsystems and Ubu
 3. Basic Linux commands
 3.1. Folder hierarchy # ls cd pwd mv
 3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
-3.3. Matching and replacing patterns # grep sed perl -pe tr
+3.3. Matching, replacing, and counting patterns # grep sed perl -pe tr
 3.4. Compress and dicompress # gzip tar pigz
 3.5. Connecting with other machines # ssh scp rsync
 3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
@@ -160,7 +160,7 @@ conda env export > bioevo_environmentv2.yml
 3. Basic Linux commands
 We have set up an enviroment within which we can work, now the aim is to use biological data to learn basic Linux commands and how to use them within the context of biological data analysis.
 
-First, we will gather data from [NCBI](https://www.ncbi.nlm.nih.gov/), one of the most widely used databases "[of online resources for biological information and data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6323993/#:~:text=Abstract,published%20in%20life%20science%20journals)". We are also interested in exploring the data available for Lithuanian spiders on NCBI, using as a reference a species list published by [Biteniekytė and Rėlys (2011)]. Our aim is to generate a report that highlights which spider species have data available, which don't, the type of data available and its quality. You are likely to use these commands often, following a similar data processing that will help you have an idea about data availability before you embark in your own projects.
+First, we will gather data from [NCBI](https://www.ncbi.nlm.nih.gov/), one of the most widely used databases "[of online resources for biological information and data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6323993/#:~:text=Abstract,published%20in%20life%20science%20journals)". We are also interested in exploring the data available for Lithuanian spiders on NCBI, using as a reference a species list published by [Biteniekytė and Rėlys (2011)](https://lmaleidykla.lt/ojs/index.php/biologija/article/view/1926/828). Our aim is to generate a report that highlights which spider species have data available, which don't, the type of data available and its quality. You are likely to use these commands often, following a similar data processing that will help you have an idea about data availability before you embark in your own projects.
 
 3.1. Folder hierarchy # ls cd pwd mv
 Files are stored within folders (or directories, is the same) and folders are nested within other folders, following a hierarchy similar to a tree structure. Using the command line interface, we can navigate through folders by following the branches of the tree, up or down to different levels of the hierarchy.
@@ -184,21 +184,94 @@ You can list the contents of a folder if you know the path. Once you confirm tha
 pwd # likely something like /home/user
 ls
 ls -lh
-ls /mnt/c/Users/user/Documents/*txt # only lists files with the txt extension
-cd /mnt/c/Users/user/Documents/
-mkdir testfolder
-cp file1 testfolder/file1
-mv file2 testfolder/
 
+# replace user with your username
+ls /mnt/c/Users/user/Documents/bioinfo4evol/* # lists all files and folders
+cd /mnt/c/Users/user/Documents/bioinfo4evol/practicals/lecture0
+mkdir testfolder
+cp sequence1.gb testfolder/sequence1.gb
+mv sequence2.gb testfolder/
+
+# what happened to file1 and file2?
 ls -lh
 ls testfolder/
 ```
 
 **TO DO:**
-Familiarise yourself with the folders 
+Familiarise yourself with the folders and files in your system. No need to delete anything, just move around and get used to the structure.
 
-3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
-3.3. Matching and replacing patterns # grep sed perl -pe tr
+3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script
+Creating, inspecting, and deleting files is relatively easy. For creating a file that you are not writing to inmediately (just creating) `touch filename is enough.
+
+```bash
+# replace "name" with your name without special characters
+touch answersL0_name.txt # creates the file
+```
+
+If you want to create and modify a file manually, you can do it using `nano filename`. [nano](https://en.wikipedia.org/wiki/GNU_nano) is a text editor for the command line interface and it is very useful for changing files in a non-systematic way. You can navigate through a file inside of nano using the keyboard arrows, the PfDn and PgUP keys, and the Home and End keys (and many more). You can write and modify text as usual, just keep in mind that clicking with a mouse is not an option. Once you are happy with the changes, simply follow the sequence for saving the changes in a file with the same name and exiting the editor: `ctrl+x` (Save modified buffer?) `y` (File Name to Write: filename.file) `enter`.
+
+As an exercise, open the `answersL0_name.txt` in `nano`, write your name, save and close the file. **You will have to answer a few questions throughout this tutorial. For each question, open the `answersL0_name.txt` in `nano`, add the question and answers, save and close the file. You will submit your file by the end of the class.**
+
+Other usefull commands for exploring files without modifiying them are `less`, `head`, and `tail`. `less` is the equivalent of opening the file "in view mode". You can navigate through the file with the keyboard arrows, PgUp and PgDn, and the spacebar, and use the kwy `q` to exit the view.
+
+`head` and `tail` show the first and last lines of a file, respectively. By default, both commands show 10 lines, but it is possible tomodify the number of lines with the `-n 50` argument for, for example, 50 lines.
+
+For example, imagine a program throws you an error that says "unrecognised character in line 928th of sequence1.gb". How can you check that line? You can use `head -n 928` and **pipe** the output to `tail`. **"Piping"** (`|`) allows one process to communicate with a subsequent process, it simplifies and makes more efficient the analysis of large amounts of data.
+
+```bash
+head -n 928 sequence1.gb | tail -n 1
+```
+
+Two more symbols that are very important and omnipresent are `>` and `>>` for creating and appending to files, respectively. For example, `head -n 10 sequence1.gb > sequence1_n10.txt` creates a file called `sequence1_n10.txt` that contains the first 10 lines in the sequence1.gb file. If the file `sequence1_n10.txt` already exists, then that command will replace the old file with the new one conserving no information from the old file. If, instead of creating a new `sequence1_n10.txt` file we want to **append** additional information to it, we can use `>>`. For example, `head -n 10 sequence2.gb >> sequence1_n10.txt` will append the first 10 lines from the file `sequence2.gb` to the already existing `sequence1_n10.txt` file.
+
+<span style="color: #f08f18;">**Question: **</span>What is the 500th line in `sequence1.gb`? And the 500th line in `sequence2.gb`? Append the two lines to your `answersL0_name.txt` file 
+
+We will now start working with data on Lithuanian spiders. We have a species list from [Biteniekytė and Rėlys (2011)](https://lmaleidykla.lt/ojs/index.php/biologija/article/view/1926/828). The `LT_spider_list.txt` file contains the information as directly copy-pasted from the publication's PDF. Our aim is to transform the unorganised information in `LT_spider_list.txt` into a list of species with taxonomic IDs that we will use to gather published sequences available online.
+
+Have a look at the `LT_spider_list.txt` file using `less`, `head`, and `tail`.
+
+<span style="color: #f08f18;">**Question: **</span>What is the 20th line in `LT_spider_list.txt`? Append the line to your `answersL0_name.txt` file
+
+3.3. Matching, replacing, and counting patterns # grep sed perl -pe tr
+You might have noticed a pattern from looking at the file. First you find a line starting with "FAMILY" for the spider family and then subsequent lines for every species in that family. We can use `grep` to print the spider families represented in Lithuania. `grep` is a command to search for **matching patterns** in a file. `grep` has very useful arguments that will help you extract key information from very large files, for example: `-v`, `-A`, `-B`. Familiarise yourself with `grep` and its arguments checking `--help`
+
+```bash
+grep --help
+```
+
+First, let's check the families in the file. Then, use `wc`, or the **word count** command for counting the lines that match "FAMILY". Finally, you can count the number of unique lines that match "FAMILY" (i.e. the lines with the exact same characters, visible or "invisible") using `uniq -c`. Beware, before checking for unique lines, you must `sort` the lines.
+
+```bash
+# grep 'pattern' file
+# use " instead of ' if the pattern is a variable (more on that later)
+grep 'FAMILY' LT_spider_list.txt
+grep 'FAMILY' LT_spider_list.txt | wc -l
+grep 'FAMILY' LT_spider_list.txt | sort | uniq -c
+```
+
+I encourage you to check all the options for `wc`, `sort`, and `uniq`. These are commands that you will be using very frequently.
+
+<span style="color: #f08f18;">**Question: **</span>How many spider families are in `LT_spider_list.txt`? Append the line to your `answersL0_name.txt` file. What do `wc -l` and `uniq -c` do? Manually add your answer to `answersL0_name.txt` using nano.
+
+We can use grep to search **regular expressions** (known as [regex](https://en.wikipedia.org/wiki/Regular_expression)) to match patterns instead of exact words. For example, we can match a pattern that is made of two strings of alphabetic characters separated by a space character, each string can be of unlimited length as long as one alphabetic character comes after another.
+
+```bash
+grep -E '[[:alpha:]]+ [[:alpha:]]+ ' LT_spider_list.txt
+grep -E '[A-Za-z]+ [A-Za-z]+' LT_spider_list.txt
+
+# the following will only show the matches, one match per line (two matches in a single input line are in different output lines)
+grep -o -E '[A-Za-z]+ [A-Za-z]+' LT_spider_list.txt
+```
+
+The code above returns what is mostly "genus species" matches, but there are lines that correspond to words describing species in the original file. We need to remove those. One obvious pattern that emerges is matches like "as speciesX". One option to deal with this is using the **stream editor** `sed`. `sed` is an incredibly powerful command that does match replacement and removes lines by index number or pattern. In the first example, we will use sed to remove lines starting with a pattern `^as ` (where `^` indicates that the following characters must be at the begining of the line).
+
+```bash
+# sed pattern file
+grep -o -E '[A-Za-z]+ [A-Za-z]+' LT_spider_list.txt | sed '^as ' 
+```
+
+However, that solution is not the best when lines have more than one matching text, i.e., more than one instance with two strings of alphabetic characters in the same line. Other solution can be instead to use `sed` and regex to match the first instance of the pattern and delete anything else afterwards (line by line).
+
 3.4. Compress and dicompress # gzip tar pigz
 3.5. Connecting with other machines # ssh scp rsync
 3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
