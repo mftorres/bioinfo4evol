@@ -35,9 +35,9 @@ This notebook will walk you through the installation of Linux subsystems and Ubu
 3.1. Folder hierarchy # ls cd pwd mv
 3.2. Create, inspect, and delete files # nano less head tail pipe tee touch cut script 
 3.3. Matching, replacing, and counting patterns # grep sed perl -pe tr
-3.4. Compress and dicompress # gzip tar pigz
-3.5. Connecting with other machines # ssh scp rsync
-3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+3.4. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+3.5. Compress and dicompress # gzip tar pigz
+3.6. Connecting with other machines # ssh scp rsync
 
 4. AWK
 1.1. Basic filtering
@@ -266,15 +266,60 @@ grep -o -E '[A-Za-z]+ [A-Za-z]+' LT_spider_list.txt
 The code above returns what is mostly "genus species" matches, but there are lines that correspond to words describing species in the original file. We need to remove those. One obvious pattern that emerges is matches like "as speciesX". One option to deal with this is using the **stream editor** `sed`. `sed` is an incredibly powerful command that does match replacement and removes lines by index number or pattern. In the first example, we will use sed to remove lines starting with a pattern `^as ` (where `^` indicates that the following characters must be at the begining of the line).
 
 ```bash
-# sed pattern file
+# sed pattern file, only in this case we don't specify the file - input is comming from the pipe
 grep -o -E '[A-Za-z]+ [A-Za-z]+' LT_spider_list.txt | sed '^as ' 
 ```
 
 However, that solution is not the best when lines have more than one matching text, i.e., more than one instance with two strings of alphabetic characters in the same line. Other solution can be instead to use `sed` and regex to match the first instance of the pattern and delete anything else afterwards (line by line).
 
-3.4. Compress and dicompress # gzip tar pigz
-3.5. Connecting with other machines # ssh scp rsync
-3.6. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+```bash
+# s stands for substitute (the command within sed)
+# we define groups or variables of patterns using the parentheses
+# we call back the groups by index (order in which they ocurr)
+# anything other character (symbolised by .)
+# g stands for global - replace all matches, not just the first
+sed -r 's/^([A-Za-z]+) ([A-Za-z]+).+/\1 \2/g' LT_spider_list.txt
+
+# better yet - we can delete lines matching "FAMILY" first, then removing anything after "genus species" matches
+# then remove lines with any punctuation symbol
+sed '/FAMILY/d' LT_spider_list.txt | sed -r 's/^([A-Za-z]+) ([A-Za-z]+).+/\1 \2/g' | sed '/[:punct:]/d'
+```
+
+We can confirm how good the processing of the file is by sorting the lines and looking at unique strings. In other words, sort the lines to look for things that do not look like "genus species". In bioinformatics (and in life in general) is always good to check and double check your results/output. Particularly if you use match/replace, since there will be instances that you did not expect.
+
+```bash
+# sort and count unique, then pass output to a file
+sed '/FAMILY/d' LT_spider_list.txt | sed -r 's/^([A-Za-z]+) ([A-Za-z]+).+/\1 \2/g' | sed '/[[:punct:]]/d' | sort | uniq -c > species.txt
+```
+
+You will notice that `uniq -c` produces two columns, the first column is the frequency of a string and the second column is the string itself. You can **cut** the columns in a file and look to specific ones using `cut` and specifiying a field delimiter (like in Excel) using `cut -d" "`. In this case, the delimiter is any space (generally includes tabs, spaces, etc). You will also notice that `uniq -c` adds a TAB (or four spaces) before the first column, you can replace multiple spaces with a single one by **translating** the strings using `tr`. `cat` simply prints the file contents to the screen.
+
+```bash
+# print second column if delimiter is a single space
+# cut shows the fields 3 and 4.
+cat species.txt | tr -s ' ' | cut -d' ' -f3,4
+
+# the above transformation results in the same output as the code below
+cut -d' ' -f8,9 species.txt
+```
+
+Similarly, to check the unique genera in the list, we can combine `cat`, `tr`, `sort`, and `unique`
+
+```bash
+cat species.txt | tr -s ' ' | cut -d' ' -f3 | sort | uniq > genera.txt
+```
+
+<span style="color: #f08f18;">**Question: **</span>What is happening? Is it working perfectly or not? How many genera is there? How could you process this file more efficiently? Manually add your answer to `answersL0_name.txt` using nano.
+
+
+To speed up the process of sequence downloads, we will select the first 10 genera.
+
+**TO DO:**
+Create a file called `genera_filtered.txt` with the first 10 genera from `genera.txt`
+
+3.4. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+3.5. Compress and dicompress # gzip tar pigz
+3.6. Connecting with other machines # ssh scp rsync
 
 4. AWK
 1.1. Basic filtering
