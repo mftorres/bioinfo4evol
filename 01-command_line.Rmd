@@ -315,9 +315,73 @@ cat species.txt | tr -s ' ' | cut -d' ' -f3 | sort | uniq > genera.txt
 To speed up the process of sequence downloads, we will select the first 10 genera.
 
 **TO DO:**
-Create a file called `genera_filtered.txt` with the first 10 genera from `genera.txt`
+Create a file called `genera_filtered.txt` with the first 10 genera from `genera.txt`. We will search for [COI]() sequences for the genera in the list by processing one line at a time. We will use loops and variables to achieve it.
 
 3.4. Variables, loops, and conditionals # for if fi while wait sedgrepvariable
+A variable is a symbolic name that representes a value that can be asigned and re-assigned depending on the context they are used. Variables are useful for generalising programs, creating pipelines where only one imput/argument changes, or for making loops more efficiently.
+
+You can assign a value to a the variable NAME llike this:
+
+```bash
+NAME='my_name'
+AGE=15
+
+# check the variable values using the echo function
+echo $NAME
+echo $AGE
+
+# what happens if you miss the $ symbol?
+echo NAME
+echo AGE
+```
+
+A variable can also be the output of a command, for example:
+
+```bash
+GENUS=$(head -n 10 species.txt | tail -n 1 | sed -r 's/([A-Za-z]+) .+/\1/g' | cut -d' ' -f8)
+echo $GENUS
+```
+
+A loop is a structure that repeat a set of commands multiple times based on a certain condition. It could be a array of items being exhausted or a variable being equal to a defined value. Two common loops in bioinformatics are `for` and `while`. `for` runs a command in a array of items (variables, files, numbers, etc) until the array is empty.
+
+```bash
+for genus in Abacoproeces Agelena Alopecosa Gnaphosa Haplodrassus; do
+  echo $genus;
+done
+
+# or 
+
+for genus in Abacoproeces Agelena Alopecosa Gnaphosa Haplodrassus; do echo $genus; done
+for genus in Abacoproeces Agelena Alopecosa Gnaphosa Haplodrassus; do echo "Genus: $genus"; done
+# note above that passing variables and text or passing variables to grep sed, needs double quotes
+
+count=1
+while [ $count -le 5 ]; do
+    echo "Count is $count";
+    ((count++));
+done
+
+# above, the -le argument stands for "less than or equal to"
+# count++ adds count to count. as count == 1, then it adds 1 at every loop
+```
+
+Now, we will use the `genera_filtered.txt` file to search for all [COI - cytochrome c oxidase I](https://en.wikipedia.org/wiki/Cytochrome_c_oxidase_subunit_I) sequences for each genus available on NCBI. We will use a couple of commands from the Blast+ suit, `esearch` and `efetch`. We will learn more about these in more depth in another lecture but for now, `esearch` creates a search query and returns an NCBI URL with the results of the search. `efetch` then takes the URL and retrieves the results in the format chosen by the user, in our case, fasta format.
+
+Note that we are reading `genera_filtered.txt` line by line and asigning the line value to the `$GENUS` variable. Then, we pass that variable to `esearch` and `efetch` to retrieve the sequences in fasta format (we will learn more about sequence formats later).
+
+
+```bash
+while IFS='' read -u 9 -r line; do
+    ID=$(echo "$line" | cut -f1);
+    echo $ID;
+    esearch -db nucleotide -query "${ID}[Organism] AND cytochrome[Titl]" | efetch -format fasta >> spiders.fasta
+    esearch -db nucleotide -query "${ID}[Organism] AND cytochrome[Titl]" | efetch -format gb >> spiders.gb
+done 9< genera_filtered.txt
+```
+
+
+
+
 3.5. Compress and dicompress # gzip tar pigz
 3.6. Connecting with other machines # ssh scp rsync
 
