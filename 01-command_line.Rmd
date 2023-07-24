@@ -311,7 +311,6 @@ cat species.txt | tr -s ' ' | cut -d' ' -f3 | sort | uniq > genera.txt
 
 <span style="color: #f08f18;">**Question: **</span>What is happening? Is it working perfectly or not? How many genera is there? How could you process this file more efficiently? Manually add your answer to `answersL0_name.txt` using nano.
 
-
 To speed up the process of sequence downloads, we will select the first 10 genera.
 
 **TO DO:**
@@ -372,15 +371,38 @@ Note that we are reading `genera_filtered.txt` line by line and asigning the lin
 
 ```bash
 while IFS='' read -u 9 -r line; do
-    ID=$(echo "$line" | cut -f1);
-    echo $ID;
-    esearch -db nucleotide -query "${ID}[Organism] AND cytochrome[Titl]" | efetch -format fasta >> spiders.fasta
-    esearch -db nucleotide -query "${ID}[Organism] AND cytochrome[Titl]" | efetch -format gb >> spiders.gb
+    GENUS=$(echo "$line" | cut -f1);
+    echo $GENUS;
+    grep "$GENUS" spiders.fasta | wc -l
 done 9< genera_filtered.txt
 ```
 
+**Important note:** Keep in mind that different search terms will output different results. For example, searching for "cytochrome" will return sequences with either *cytochrome* or *cytochrome II* or *cytochrome I* in the title and will not return sequences without *cytochrome* but with *COI* in the title.
 
+The code above creates the URL with the results from searching sequences from each genus and with *cytochrome* in the sequence title. Then, one line downloads the results in fasta format (only sequences) and in GeneBank (gb) format.
 
+In fasta files, the line containing the information about the sequence starts with the '>' symbol whereas the lines containing the sequences will not have any symbol at all. Thus, you can count the number of sequences in the fasta file by using `grep` to find the '>' symbol in the `spiders.fasta` file, then pipe the result to `wc` and count the number of lines.
+
+<span style="color: #f08f18;">**Question: **</span>How many sequences are there in the `spiders.fasta` file? Append the answer to your `answersL0_name.txt` using `>>`.
+
+**TO DO:**
+Use a `for` loop to grep each genera from the `genera_filtered.txt` file and count how many sequences were downloaded.
+
+<span style="color: #f08f18;">**Question: **</span>Which spider genera do NOT have sequences available? Manually add you answer to your `answersL0_name.txt` using `nano`.
+
+To check the publications associated with the sequence submissions, you can use `grep` and include in the results one extra line for a bit of context. Check for the country and `lat_lon` fields associated with every sequence in the `gb` (or GenBank) file. Where are the vouchers (the source of the sequence) from? Where were they collected? Is any voucher collected in Lithuania?
+
+```bash
+grep -A 1 'TITLE' spiders.gb
+grep 'country' spiders.gb
+grep 'lat_lon' spiders.gb
+```
+
+Finally, but not less importantly, we want to understand the quality state of our data. We downloaded COI Sequences from spiders. COI is a universaly used DNA barcode that is sequenced using primers, oligonucleotides that match a conserved region near the sequence of interest that *prime* the taq polymerase to start the synthesis of the complementary strand (after denaturation and annealing). Primers are often sequenced together with the rest of the barcode fragment and it is advisable to remove their sequences from the data before proceeding to do phylogenetic analyses. However, sequences submited to NCBI are not always curated and clean and we must identify which sequences still have the primers. This is easily done with `grep`.
+
+```bash
+grep 'AGATATTGG' spiders.fasta
+```
 
 3.5. Compress and dicompress # gzip tar pigz
 3.6. Connecting with other machines # ssh scp rsync
