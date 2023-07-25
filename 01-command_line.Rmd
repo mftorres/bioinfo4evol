@@ -401,8 +401,19 @@ grep 'lat_lon' spiders.gb
 Finally, but not less importantly, we want to understand the quality state of our data. We downloaded COI Sequences from spiders. COI is a universaly used DNA barcode that is sequenced using primers, oligonucleotides that match a conserved region near the sequence of interest that *prime* the taq polymerase to start the synthesis of the complementary strand (after denaturation and annealing). Primers are often sequenced together with the rest of the barcode fragment and it is advisable to remove their sequences from the data before proceeding to do phylogenetic analyses. However, sequences submited to NCBI are not always curated and clean and we must identify which sequences still have the primers. This is easily done with `grep`.
 
 ```bash
-grep 'AGATATTGG' spiders.fasta
+grep 'AGATATTGG' spiders.fasta # LCO 1490 (Miller et. al., 2013)
+
+# it is possible to search for the complementary and reversed sequence of a primer in the sequences downloaded
+# primer Lepidoptera Forward (Hebert et. al., 2004)
+# note that the code is not using the pipe but giving three separate instructions
+# each instruction is separated by a ;
+# this is rarely done because reading the code gets difficult.
+# -C provides n lines of context
+
+REVSEQ=$(echo 'TAAAGATAT' | tr ACGTacgt TGCAtgca | rev ); echo $REVSEQ; grep -C 3 "$REVSEQ" spiders.fasta
 ```
+
+Think about this. What implications exist if the primer sequence is at the begining, at the end, or in the middle of the sequence?
 
 3.5. Compress and dicompress # gzip tar pigz
 3.6. Connecting with other machines # ssh scp rsync
