@@ -429,9 +429,25 @@ AWK is a programming language design to process text efficiently, particularly t
 awk 'pattern { action }' input_file
 ```
 
-AWK has pre-defined variables that can be passed as patterns. The most common ones are variables that indicate the entire line of the file `$0` or a particular field (think column) of the file, e.g. `$1` and `$2` for printing the first and second fields/columns of the file. Very similar to the command `cut` would do. As AWK considers fields as variables, it is possible to indicate the delimiter (`FS` or *field separator*).
+AWK has pre-defined variables that can be passed as patterns. The most common ones are variables that indicate the entire line of the file `$0` or a particular field (think column) of the file, e.g. `$1` and `$2` for printing the first and second fields/columns of the file. Very similar to the command `cut` would do. As AWK considers fields as variables, it is possible to indicate the delimiter with `-F`.
+
+We will apply AWK commands to `Zelote_coordinates.csv`, a tabular text file that contains geographic coordinates for the spider genera [*Zelotes*](https://en.wikipedia.org/wiki/Zelotes_subterraneus). The data was downloaded on July 26th, 2023 from GBIF and the DOI associated with the search is [here](https://doi.org/10.15468/dl.4ke7tf)
+
+First, use `head`, `cut`, or other commands that you have learnt so far to explore the data within the file.
+
+<span style="color: #f08f18;">**Question: **</span>How many lines are in the file (each line represents a coordinate record)? How many different species are there in the file? Hint: you can use a combination of `head` and `cut` to figure out which file corresponds to the species ephitet. Append your answer to `answersL0_name.txt` using `>>`.
+
+Now that you understand what is the structure of the file, the header and name of the columns, and the kind of information that it has, we will use AWK to extract information and clean records with flagged coordinate records. It is possible to carry out the same actions on the file using e.g. Excel, however, there's a limit to the size of files that Excel can process and command-line programs/languages like AWK are faster and more efficient, allowing you to process files that are [gigabytes](https://en.wikipedia.org/wiki/File_size) in size.
+
+First, we will filter out the columns that contain information that is not relevant for us right now. We can use AWK's `print` and field variables to do it. Then, we can look at the *species* columns and remove the records with that field empty (less assume we need coordinate records at the species level, not the genus level).
+
+```bash
+awk -F '\t' '{print $7, $8, $9, $10, $19, $20, $22, $23, $50}' Zelote_coordinates.csv > Zelote_coordinates_sel.csv
+# the new columns are "order family genus species occurrenceStatus individualCount decimalLatitude decimalLongitude issue"
 
 
+
+```
 
 1.1. Basic filtering
 1.2. Operations
@@ -441,3 +457,5 @@ AWK has pre-defined variables that can be passed as patterns. The most common on
 5.2. Job submission files
 
 6. Jupyter notebooks # and wildcards Rkernel
+
+
