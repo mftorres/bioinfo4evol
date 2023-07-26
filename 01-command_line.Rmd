@@ -416,9 +416,23 @@ REVSEQ=$(echo 'TAAAGATAT' | tr ACGTacgt TGCAtgca | rev ); echo $REVSEQ; grep -C 
 Think about this. What implications exist if the primer sequence is at the begining, at the end, or in the middle of the sequence?
 
 3.5. Compress and dicompress # gzip tar pigz
+Compressing and decompressing files is a common task in bioinformatics and it[ consists in reducing the size of a file by reducing the bits needed to encode the same information](https://en.wikipedia.org/wiki/Data_compression). Compressing files is useful because pipelines (a series of interconnected programs/analyses to process data, from raw to final) often generate large files that fill the disk space pretty quickly. It is also useful as smaller files are easier to transfer. Common compression and decompression pairs of programs are (respectively) `gzip` and `gunzip`, and the parallelizable `pigz` and `pigz -dc`. Another popular program is `tar`, which stores multiple files in a single one and has compression options (is not limited to just compress/decompress single files)
+
+Explore the options for each of those programs, particularly how to deal with the output. Which one creates a file automatically? Which one sends the output to *standard output* ([stdout](https://en.wikipedia.org/wiki/Standard_streams)) instead?
+
 3.6. Connecting with other machines # ssh scp rsync
 
 4. AWK
+AWK is a programming language design to process text efficiently, particularly tabular text. AWK takes as inputs a pattern, an action, and a file or text from the *standard input* ([stdin](https://en.wikipedia.org/wiki/Standard_streams)) to operate upon. The pattern is a regex expression that indicates a text match or a field in the input file. The action is a command that will be executed on the match.
+
+```bash
+awk 'pattern { action }' input_file
+```
+
+AWK has pre-defined variables that can be passed as patterns. The most common ones are variables that indicate the entire line of the file `$0` or a particular field (think column) of the file, e.g. `$1` and `$2` for printing the first and second fields/columns of the file. Very similar to the command `cut` would do. As AWK considers fields as variables, it is possible to indicate the delimiter (`FS` or *field separator*).
+
+
+
 1.1. Basic filtering
 1.2. Operations
 
