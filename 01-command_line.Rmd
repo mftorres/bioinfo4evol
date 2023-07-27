@@ -421,6 +421,44 @@ Compressing and decompressing files is a common task in bioinformatics and it[ c
 Explore the options for each of those programs, particularly how to deal with the output. Which one creates a file automatically? Which one sends the output to *standard output* ([stdout](https://en.wikipedia.org/wiki/Standard_streams)) instead?
 
 3.6. Connecting with other machines # ssh scp rsync
+Some times we need to connect to other machines and send files through the command line. Personal computers do not always have enough computational capabilities to handle data but we can connect from our machines to other [High-Performance Computing systems (HPC)](https://en.wikipedia.org/wiki/High-performance_computing) that can handle larger data and more memory-intensive processes. If that is the case, then we will need to transfer large files between local (yours) and remote (the other), something that is not possible through email or simple cloud services.
+
+`ssh` is the most common command for securely login into a remote computer and executing commands on that machine. It generally looks like this:
+
+```bash
+ssh username@remote_host
+
+# if we want to specify a specific port, usually port 22
+ssh -p 22 username@remote_host
+```
+
+Once you are connected, you can run commands just like if you were on your machine, minding the folder structure of the remote machine you are connected to.
+
+`scp` allows you to securely transfer files between your local machine and the remote computer and viceversa. You need to keep in mind where you are (local machine? or already logged into the remote machine?) and the source and destination paths for the files.
+
+```bash
+# the command below assumes you are sitting inside the machine from which you are transfering files
+# it is usually easier to transfer files from your local machine to remote machines when sitting inside your local machine (password and address)
+# copy local file to remote
+
+scp local_file username@remote_host:destination_path/
+
+# to transfer a file from a remote machine to the local machine in which you are sitting
+# copy remote file to local
+scp username@remote_host:remote_path/file destination_local_folder/
+```
+
+`scp` is good enough when files are small to medium files and internet connections are robust. However, `scp` is not enough for transfering larger files over internet connections that might fail and when having to check the integrity of the file after transfer. For that, it is better to use `rsync`. Moreover, if the files exist in both the local and remote machines `rsyn` only transfers the changes between file copies and skips the rest, making the transfer faster.
+
+```bash
+# simple transfer from local machine to remote machine
+# -a keeps file permissions as they are in the source local machine
+# -v verbose, print all output and errors
+# -z compress data for transfer (faster)
+# after transfer, rsync checks that source and destination files are the same
+
+rsync -avz local_folder/ username@remote_host:destination_path
+```
 
 4. AWK
 AWK is a programming language design to process text efficiently, particularly tabular text. AWK takes as inputs a pattern, an action, and a file or text from the *standard input* ([stdin](https://en.wikipedia.org/wiki/Standard_streams)) to operate upon. The pattern is a regex expression that indicates a text match or a field in the input file. The action is a command that will be executed on the match.
@@ -437,20 +475,47 @@ First, use `head`, `cut`, or other commands that you have learnt so far to explo
 
 <span style="color: #f08f18;">**Question: **</span>How many lines are in the file (each line represents a coordinate record)? How many different species are there in the file? Hint: you can use a combination of `head` and `cut` to figure out which file corresponds to the species ephitet. Append your answer to `answersL0_name.txt` using `>>`.
 
+1.1. Basic filtering
 Now that you understand what is the structure of the file, the header and name of the columns, and the kind of information that it has, we will use AWK to extract information and clean records with flagged coordinate records. It is possible to carry out the same actions on the file using e.g. Excel, however, there's a limit to the size of files that Excel can process and command-line programs/languages like AWK are faster and more efficient, allowing you to process files that are [gigabytes](https://en.wikipedia.org/wiki/File_size) in size.
 
-First, we will filter out the columns that contain information that is not relevant for us right now. We can use AWK's `print` and field variables to do it. Then, we can look at the *species* columns and remove the records with that field empty (less assume we need coordinate records at the species level, not the genus level).
+First, we will filter out the columns that contain information that is not relevant for us right now. We can use AWK's `print` and field variables to do it. Then, we can add another a filter to only print the lines with non-empty `decimalLatitude` fields, i.e. printing records that are not missing the geolographic coordinates.
 
 ```bash
-awk -F '\t' '{print $7, $8, $9, $10, $19, $20, $22, $23, $50}' Zelote_coordinates.csv > Zelote_coordinates_sel.csv
 # the new columns are "order family genus species occurrenceStatus individualCount decimalLatitude decimalLongitude issue"
+# \t is the regular expression for tab
+awk -F '\t' '{print $7, $8, $9, $10, $19, $20, $22, $23, $50}' Zelote_coordinates.csv > Zelote_coordinates_sel.csv
 
+# we are using the \ symbol to introduce a line break without breaking the code (for easy reading)
+# OFS sets the output field separator
+# in the second part of the pipeline we need to ask awk to BEGIN the program to execute the first action before reading the input file
+# the filter is the if conditional and the symbols != mean is different than
+# printf prints formated strings
+# %s refers to a string match that will be replaced by the variable, in the same order that %s and $var appear
+# every %s is separated by a tab symbol and the line ends with the line-end regular expression \n
+# we need to do it this way because the column species has a space
 
-
+awk -F '\t' '{printf ("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n", $7, $8, $9, $10, $19, $20, $22, $23, $50)}' Zelote_coordinates.csv | \
+awk -F '\t' 'BEGIN {OFS = FS} {if ($7 != "") print $0;}' > Zelote_coordinates_sel.csv
 ```
 
-1.1. Basic filtering
 1.2. Operations
+It is possible to caryr out matematichal operations using AWK. The `Zelote_coordinates_sel.csv` column *individualCount* contains the number of spider observations per record. It is common that insects are recorded in counts instead of creating a single record for each insect with the same metadata. Thus, counting lines as records is not enough to count the total number of individuals per species that have been observed. But we can do that with AWK.
+
+AWK has associative arrays, something like a dictionary where the word is a key and the "meaning" is the value. Assuming that we will sum up the individual counts across all the records within a species, then the value of the species column is the key and the individual counts will be the values.
+
+First, familiarise yourself with the *species* and *individualCount* columns, then you can do the sums.
+
+``bash
+# we need to skip the header line by asking Number Record higher than one
+# && means AND as a conditional such that if species is not empty AND individualCount is not empty
+# the information passed to the second pipe only has two columns, species and individualCount
+# the last part creates an array called sum from the species column and adds the values in column 2 as a list of values
+# AWK ends the first action and starts iterating through the array sum, adding all the individual counts in the list of values
+
+awk '(NR>1)' Zelote_coordinates_sel.csv | awk -F '\t' '{if ($4 != "" && $6 != "") printf "%s\t%s\n", $4, $6;}' | awk -F '\t' '{ sum[$1] += $2 } END { for (group in sum) print group, sum[group] }'
+```
+
+The code above then takes a tabular list of geographic records from GBIF, then removes lines with no coordinates or species information, and finally counts how many individual counts in total there are per species.
 
 5. Intro to schedulers
 5.1. Terminology
