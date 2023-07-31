@@ -43,11 +43,9 @@ This notebook will walk you through the installation of Linux subsystems and Ubu
 1.1. Basic filtering
 1.2. Operations
 
-5. Intro to schedulers
-5.1. Terminology
-5.2. Job submission files
+5. Jupyter notebooks
 
-6. Jupyter notebooks # and wildcards Rkernel
+6. Summary
 
 ---
 
@@ -475,7 +473,7 @@ First, use `head`, `cut`, or other commands that you have learnt so far to explo
 
 <span style="color: #f08f18;">**Question: **</span>How many lines are in the file (each line represents a coordinate record)? How many different species are there in the file? Hint: you can use a combination of `head` and `cut` to figure out which file corresponds to the species ephitet. Append your answer to `answersL0_name.txt` using `>>`.
 
-1.1. Basic filtering
+4.1. Basic filtering
 Now that you understand what is the structure of the file, the header and name of the columns, and the kind of information that it has, we will use AWK to extract information and clean records with flagged coordinate records. It is possible to carry out the same actions on the file using e.g. Excel, however, there's a limit to the size of files that Excel can process and command-line programs/languages like AWK are faster and more efficient, allowing you to process files that are [gigabytes](https://en.wikipedia.org/wiki/File_size) in size.
 
 First, we will filter out the columns that contain information that is not relevant for us right now. We can use AWK's `print` and field variables to do it. Then, we can add another a filter to only print the lines with non-empty `decimalLatitude` fields, i.e. printing records that are not missing the geolographic coordinates.
@@ -498,7 +496,7 @@ awk -F '\t' '{printf ("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n", $7, $8, $9, $10,
 awk -F '\t' 'BEGIN {OFS = FS} {if ($7 != "") print $0;}' > Zelote_coordinates_sel.csv
 ```
 
-1.2. Operations
+4.2. Operations
 It is possible to caryr out matematichal operations using AWK. The `Zelote_coordinates_sel.csv` column *individualCount* contains the number of spider observations per record. It is common that insects are recorded in counts instead of creating a single record for each insect with the same metadata. Thus, counting lines as records is not enough to count the total number of individuals per species that have been observed. But we can do that with AWK.
 
 AWK has associative arrays, something like a dictionary where the word is a key and the "meaning" is the value. Assuming that we will sum up the individual counts across all the records within a species, then the value of the species column is the key and the individual counts will be the values.
@@ -517,10 +515,53 @@ awk '(NR>1)' Zelote_coordinates_sel.csv | awk -F '\t' '{if ($4 != "" && $6 != ""
 
 The code above then takes a tabular list of geographic records from GBIF, then removes lines with no coordinates or species information, and finally counts how many individual counts in total there are per species.
 
-5. Intro to schedulers
-5.1. Terminology
-5.2. Job submission files
+5. Jupyter notebooks
 
-6. Jupyter notebooks # and wildcards Rkernel
+6. Summary
 
+**Navigating the folders:**
+cd: Change directory
+ls: List files and directories
+pwd: Print working directory
 
+**File and folder manipulation:**
+mkdir: Create a new directory
+touch: Create a new file
+cp: Copy files or directories
+mv: Move or rename files or directories
+rm: Remove files or directories
+grep: Search for a specific pattern in files
+find: Search for files and directories
+
+**Permissions:**
+chmod: Change file permissions
+chown: Change file ownership
+
+**redirecting information and piping:**
+>: Redirect output to a file (overwrite)
+>>: Redirect output to a file (append)
+|: Pipe output of one command as input to another
+
+**Exploring and editing files:**
+cat: Concatenate and display file content
+less: View file content with pagination
+head: Display the beginning of a file
+tail: Display the end of a file
+nano: Text editor for modifying files
+
+**Data Manipulation:**
+awk: Text processing and data extraction
+sed: Stream editor for modifying text
+
+**Process management:**
+ps: View running processes
+kill: Terminate a process
+
+**File compression:**
+tar: Archive files and directories
+gzip or gunzip: Compress or decompress files
+
+**Remote connections and transfers:**
+ssh: Securely connect to a remote server
+scp: Securely copy files between local and remote machines
+rsync: Securely and efficiently transfer files, more flexible
