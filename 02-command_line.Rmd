@@ -366,14 +366,18 @@ Now, we will use the `genera_filtered.txt` file to search for all [COI - cytochr
 
 Note that we are reading `genera_filtered.txt` line by line and asigning the line value to the `$GENUS` variable. Then, we pass that variable to `esearch` and `efetch` to retrieve the sequences in fasta format (we will learn more about sequence formats later).
 
+esearch -db nucleotide -query "${GENUS}[Organism] AND cytochrome[Titl]" | efetch -format fasta > test.fasta;
+
 
 ```bash
 while IFS='' read -u 9 -r line; do
     GENUS=$(echo "$line" | cut -f1);
     echo $GENUS;
-    grep "$GENUS" spiders.fasta | wc -l
+    esearch -db nucleotide -query "${GENUS}[Organism] AND cytochrome[Titl]" | efetch -format fasta >> test.fasta;
 done 9< genera_filtered.txt
 ```
+
+grep "$GENUS" spiders.fasta | wc -l
 
 **Important note:** Keep in mind that different search terms will output different results. For example, searching for "cytochrome" will return sequences with either *cytochrome* or *cytochrome II* or *cytochrome I* in the title and will not return sequences without *cytochrome* but with *COI* in the title.
 
