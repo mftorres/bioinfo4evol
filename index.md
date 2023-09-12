@@ -1,7 +1,7 @@
 --- 
 title: "Bioinformatics for Evolution"
 author: "Maria Fernanda Torres Jimenez"
-date: "`r Sys.Date()`"
+date: "2023-09-12"
 site: bookdown::bookdown_site
 documentclass: book
 bibliography:
@@ -21,9 +21,4 @@ csl: "chicago-fullnote-bibliography.csl"
 
 
 
-```{r include=FALSE}
-# automatically create a bib database for R packages
-knitr::write_bib(c(
-  .packages(), 'bookdown', 'knitr', 'rmarkdown'
-), 'packages.bib')
-```
+

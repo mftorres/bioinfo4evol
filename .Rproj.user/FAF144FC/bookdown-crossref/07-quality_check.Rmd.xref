@@ -1,0 +1,14 @@
+h1:url-your-book-url-like-httpsbookdown.orgbioinfo4evolbookdown url: your book url like https://bookdown.org/bioinfo4evol/bookdown
+h1:cover-image-path-to-the-social-sharing-image-like-imagescover.jpg cover-image: path to the social sharing image like images/cover.jpg
+h1:this-is-a-minimal-example-of-using-the-bookdown-package-to-write-a-book. This is a minimal example of using the bookdown package to write a book.
+h1:the-html-output-format-for-this-example-is-bookdownbs4_book The HTML output format for this example is bookdown::bs4_book,
+h1:set-in-the-_output.yml-file. set in the _output.yml file.
+h1:references References
+h1:assembly-quality-check Assembly quality check
+h2:length-metrics Length metrics
+h2:information-n-metrics Information (N) metrics
+h2:completeness-metrics Completeness metrics
+h3:busco BUSCO
+h2:comparing-assemblies Comparing assemblies
+h3:quast Quast
+
