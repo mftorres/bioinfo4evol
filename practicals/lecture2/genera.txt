@@ -9,6 +9,7 @@ Agroeca
 Agyneta
 Alopecosa
 Amaurobius
+An
 Anguliphantes
 Antistea
 Anyphaena
@@ -120,6 +121,7 @@ Neriene
 Notioscopus
 Nuctenea
 Oedothorax
+Old
 Oryphantes
 Oxyopes
 Ozyptila
@@ -160,6 +162,7 @@ Steatoda
 Stemonyphantes
 Stroemiellus
 Synageles
+THE
 Talavera
 Tallusia
 Tapinocyba
@@ -169,6 +172,7 @@ Tegenaria
 Tenuiphantes
 Tetragnatha
 Thanatus
+The
 Theonoe
 Theridion
 Thomisus
@@ -187,3 +191,7 @@ Zelotes
 Zora
 Zornella
 Zygiella
+all
+and
+not
+were
