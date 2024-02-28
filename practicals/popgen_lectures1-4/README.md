@@ -1,1 +1,1 @@
-single jupyter notebook for lectures on speciation with geneflow using published Heliconius data.
+In process - single jupyter notebook for lectures on speciation with geneflow using published Heliconius data.
